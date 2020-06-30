@@ -13,12 +13,16 @@ import multiprocessing
 
 class WSGIServer(object):
 
-    def __init__(self, port, documents_root, app):
+    address_family = socket.AF_INET
+    socket_type = socket.SOCK_STREAM
+
+    def __init__(self, server_address, app):
         
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket = socket.socket(self.address_family, self.socket_type)
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # self.server_socket.setblocking(False)
-        self.server_socket.bind(('', port))
+        self.server_address = server_address
+        self.server_socket.bind(self.server_address)
         self.server_socket.listen(128)
 
         # Get server host name and port
@@ -31,10 +35,13 @@ class WSGIServer(object):
         self.request_version = None  # HTTP/1.1
 
         # 指定资源文件的路径
-        self.documents_root = documents_root
+        self.documents_root = None
 
         # 指定web框架调用的函数对象
         self.app = app
+
+    def set_doc_root(self, path):
+        self.documents_root = path
     
     def run_forever(self):
         """run server"""
@@ -92,7 +99,8 @@ class WSGIServer(object):
             if self.path == '/':
                 self.path = '/index.html'
 
-            if not self.path.endswith('.py'):
+            # 如果不是以py结尾的文件，认为是普通静态文件
+            if self.path.endswith('.html'):
                 try:
                     f = open(self.documents_root+self.path, 'rb')
                 except Exception as e:
@@ -143,46 +151,56 @@ class WSGIServer(object):
         
         self.headers = [status, response_header_default + headers]
 
-        
+
 g_static_docment_root = './static'
 g_dynamic_document_root = './web'
+IP = ''
+PORT = 8888
+
+
+
+def make_server(server_address, app):
+    http_server = WSGIServer(server_address, app)
+    http_server.set_doc_root = g_static_docment_root
+    
+    return http_server
+
 
 
 def main():
-    # # eg: python xx.py 5000
-    # if len(sys.argv) == 3:
-    #     port = sys.argv[1]
-    #     if port.isdigit():
-    #         port = int(port)
+    
+    # eg: python xx.py 5000
+    if len(sys.argv) == 3:
+        port = sys.argv[1]
+        if port.isdigit():
+            PORT = int(port)
         
-    #     # 获取web服务器需要动态资源时，访问的web框架名字
-    #     web_frame_module_app_name = sys.argv[2]
-    # else:
-    #     print("运行方式如: python3 xxx.py 7890 my_web_frame_name:application")
-    #     return
+        # 获取web服务器需要动态资源时，访问的web框架名字
+        web_frame_module_app_name = sys.argv[2]
+    else:
+        print("运行方式如: python3 xxx.py 7890 my_web_frame_name:application")
+        return
 
+    # 将动态路径即存放py文件的路径，添加到path中，这样python就能够找到这个路径了
+    sys.path.append(g_dynamic_document_root)
 
-    # print("http服务器使用的port:%s" % port)
+    ret = re.match(r"([^:]*):(.*)", web_frame_module_app_name)
+    if ret:
+        # 获取模块名
+        web_frame_module_name = ret.group(1)
+        # 获取可以调用web框架的应用名称
+        app_name = ret.group(2)
 
-    # # 将动态路径即存放py文件的路径，添加到path中，这样python就能够找到这个路径了
-    # sys.path.append(g_dynamic_document_root)
+    # 导入web框架的主模块
+    web_frame_module = __import__(web_frame_module_name)
+    # 获取可调用的函数对象
+    app = getattr(web_frame_module, app_name)
+    
+    # from web.demo_web import application as app
 
-    # ret = re.match(r"([^:]*):(.*)", web_frame_module_app_name)
-    # if ret:
-    #     # 获取模块名
-    #     web_frame_module_name = ret.group(1)
-    #     # 获取可以调用web框架的应用名称
-    #     app_name = ret.group(2)
-
-    # # 导入web框架的主模块
-    # web_frame_module = __import__(web_frame_module_name)
-    # # 获取可调用的函数对象
-    # app = getattr(web_frame_module, app_name)
-    from web.demo_web import application
-
-    http_server = WSGIServer(8888, g_static_docment_root, application)
-    http_server.run_forever()
-
+    hs = make_server((IP, PORT), app)
+    print(f'WSGIServer: Serving HTTP: {hs.server_name} on port {PORT} ...\n')
+    hs.run_forever()
 
 if __name__ == '__main__':
     main()
