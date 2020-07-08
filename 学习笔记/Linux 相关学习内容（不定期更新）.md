@@ -439,8 +439,119 @@ sed行文件编辑命令，编辑文件以行为单位
 > screen -ls                             # 列出所有screen 启动的会话
 >
 > screen -r  session name    # 重连会话
+>
+> screen -x  session name    # 重连会话
+>
+> screen -wipe						# 检查目前所有screen 作业， 并删除已经无效的作用
+>
+> CTRL -a  d                             # 暂时断开当前会话
+>
+> CTRL -a  k                              # kill window and process 关闭当前screen窗口和里面的进程，也可以使用exit退出当前窗口
+
+### 批量kill 包含某字段的所有进程
+
+```shell
+ps -ef | grep field | grep -v grep | cut -c 9-15 | xargs kill -9
+```
+
+- `ps -ef|grep field` 查看所有包含某字段的进程
+- `grep -v grep`  在列出的进程中去除包含有关键字 `grep`的进程
+- `cut -c 9-15`  截取输入行的第9-15个字符，而这正好是进程的PID
+- `xargs kill -9` 其中xargs命令是用来把前面命令的输出结果（PID）作为 `kill -9` 命令的参数, 并执行该命令 
+
+```shell
+ps x | grep field | grep -v grep | awk '{print $1}' | xargs kill -9
+
+# 统计僵尸进程
+ps -ef | grep defunct |grep -v grep | wc -l
+
+# 查看所有运行的进程
+ps aux | less
+
+# 查看某进程下的线程
+ps -ef | grep redis-sever
+# ->redis-server pid:12400
+ps -T -p 12400
+# ps命令的“-T”参数表示显示线程（Show threads, possibly with SPID column.）“SID”栏表示线程ID，而“CMD”栏则显示了线程名称
+```
+
+![这里写图片描述](https://img-blog.csdn.net/20180307172053108?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDg3MDUxOA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
 
+
+批量删除含有大量内容的文件
+
+```shell
+ls | grep '.csv' | xargs -n 100 rm -rf
+```
+
+查找所有的 jpg 文件，并且压缩它们
+
+```shell
+find . -type f -name '*.jpg' -print | xargs tar -czvf images.tar.gz
+```
+
+
+
+假如你有一个文件包含了很多你希望下载的 URL，你能够使用 xargs下载所有链接
+
+```
+cat url-list.txt | xargs wget -c
+```
+
+### linux后台执行命令：&和nohup
+
+转载自：[linux后台执行命令：&和nohup](https://blog.csdn.net/liuyanfeier/article/details/62422742)
+
+### &
+
+当在前台运行某个作业时，终端被该作业占据；可以在命令后面加上& 实现后台运行。例如：sh test.sh &
+
+> command > out.file 2>&1  &
+
+当你成功地提交进程以后，就会显示出一个进程号，可以用它来监控该进程，或杀死它。(ps -ef | grep 进程号 或者 kill -9 进程号）
+
+### nohup
+
+使用&命令后，作业被提交到后台运行，当前控制台没有被占用，但是一但把当前控制台关掉(退出帐户时)，作业就会停止运行。nohup命令可以在你退出帐户之后继续运行相应的进程。nohup就是不挂起的意思( no hang up)，**可以让进程在后台可靠运行**
+
+> nohub ./program > /dev/null 2>&1  &
+
+`/dev/null`   一个文件无底洞, 所有的重定向到它的信息都会消失得无影无踪
+
+如果使用nohup命令提交作业，那么在缺省情况下该作业的所有输出都被重定向到一个名为nohup.out的文件中，除非另外指定了输出文件
+
+> nohub command > out.file 2>&1  &
+
+使用了nohup之后，很多人就这样不管了，其实这样有可能在当前账户非正常退出或者结束的时候，命令还是自己结束了。所以在使用nohup命令后台运行命令之后，需要使用exit正常退出当前账户，这样才能保证命令一直在后台运行
+
+- ctrl + z
+  可以将一个正在前台执行的命令放到后台，并且处于暂停状态。
+
+- Ctrl+c
+  终止前台命令。
+
+- jobs
+  查看当前有多少在后台运行的命令。
+  jobs -l选项可显示所有任务的PID，jobs的状态可以是running, stopped, Terminated。但是如果任务被终止了（kill），shell 从当前的shell环境已知的列表中删除任务的进程标识
+
+#### 2>&1解析
+
+> command >out.file 2>&1 &
+
+- command>out.file是将command的输出重定向到out.file文件，即输出内容不打印到屏幕上，而是输出到out.file文件中
+
+- 2>&1 是将标准出错重定向到标准输出，这里的标准输出已经重定向到out.file文件，即将标准出错也输出到out.file文件中，最后一个 & 是让该命令在后台运行
+
+- 试想2>1代表什么，2与>结合代表错误重定向，而1则代表错误重定向到一个文件1，而不代表标准输出；换成2>&1，&与1结合就代表标准输出了，就变成错误重定向到标准输出
+
+Linux中的3种重定向
+
+- 0： 表示标准输入
+- 1： 标准输出，在一般使用时，默认是标准输出
+- 2： 标准错误信息输出
+
+> ./program.py 2>log    # 将某个程序的错误信息输出到log    **标准输出打印还是在屏幕, 但是错误信息会输出到log文件中** 
 
 ## 网络相关
 
