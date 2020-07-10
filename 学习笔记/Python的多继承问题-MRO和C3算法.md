@@ -70,7 +70,9 @@ class A(object):
 
 ![Compiler vs Interpretor](http://kaiyuan.me/img/inherit1.png)
 
-按照上述深度递归的方式，函数 `d.who_am_i()` 调用的搜索顺序是 D, B, A, C, A。由于一个类不能两次出现，因此在搜索路径中去除掉重复出现的 A，得到最终的方法解析顺序是 D, B, A, C。这样一来你就明白了为什么 `d.who_am_i()` 打印的是 `I am A` 了。
+按照上述深度递归的方式，函数 `d.who_am_i()` 调用的搜索顺序是 D, B, A, C, A。由于一个类不能两次出现，因此在搜索路径中去除掉重复出现的 A，得到最终的方法解析顺序是 D, B, A, C。这样一来你就明白了为什么 `d.who_am_i()` 打印的是 `I am A` 了。所以如果C类重写了方法，那么根据这种算法是无法调用到的。
+
+![](https://img2020.cnblogs.com/blog/778496/202007/778496-20200710095337320-2108434218.png)
 
 在 Python 2 中，我们可以通过如下方式来查看 old-style class 的 MRO：
 
@@ -78,6 +80,14 @@ class A(object):
 >>> import inspect
 >>> inspect.getmro(D)
 ```
+
+## 过度算法BFS（Breadth First Algorithm）
+
+在python2.2的时候引入了 BFS（Breadth First Algorithm）来解决以上的问题即 （上面所说的如果C类重写了父类的方法按照 调用的都是A）**本地优先级原则**，下图为BFS的MRO图解
+
+![img](https://img2020.cnblogs.com/blog/778496/202006/778496-20200620124241293-590809498.png)
+
+但是这样又引入了一个新的问题，即正常的继承模式中B继承于D, 那么应该是优先调用D的方法，而不是调用C的方法，违背**单调性原则**。所以该算法只在python2.2的版本中使用，在后面的版本都是使用的C3线性算法。
 
 ## 理解 new-style class 的 MRO
 
