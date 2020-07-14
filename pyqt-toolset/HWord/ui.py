@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'fw.ui'
+# Form implementation generated from reading ui file 'filetool.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.0
 #
@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Form(object):
     def setupUi(self, Form):
-        Form.setObjectName("Office 文件修改器")
+        Form.setObjectName("Form")
         Form.resize(566, 431)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -55,9 +55,11 @@ class Ui_Form(object):
         self.progressBar.setProperty("value", 24)
         self.progressBar.setObjectName("progressBar")
         self.gridLayout.addWidget(self.progressBar, 3, 0, 1, 4)
-        self.tableView = QtWidgets.QTableView(Form)
-        self.tableView.setObjectName("tableView")
-        self.gridLayout.addWidget(self.tableView, 4, 0, 1, 4)
+        self.tableWidget = QtWidgets.QTableWidget(Form)
+        self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setRowCount(1)
+        self.gridLayout.addWidget(self.tableWidget, 4, 0, 1, 4)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
 
         self.retranslateUi(Form)

@@ -22,15 +22,23 @@ templates_root = './static'
 
 g_url_maps = dict()
 
+# def route(url):
+#     def wrapper(func):
+#         # 调用路由解析
+#         g_url_maps[url] = func
+#         @wraps(func)
+#         def inner_wrap(file_name):
+#             return func(file_name)
+
+#         return inner_wrap
+#     return wrapper
+
+
 def route(url):
     def wrapper(func):
         # 调用路由解析
         g_url_maps[url] = func
-        @wraps(func)
-        def inner_wrap(file_name):
-            return func(file_name)
-
-        return inner_wrap
+        return func
     return wrapper
 
 

@@ -142,7 +142,7 @@ pool_header 作用
 3. 保存 szidx , 这个和该pool中block的大小有关系, (block size=8, szidx=0), (block size=16, szidx=1)...用于内存分配时匹配到拥有对应大小block的pool
 ```
 
-![image.png](https://i.loli.net/2020/06/06/CJ9MnOGEm5THDBK.png)
+![image-20200709235231840](C:\Users\asus\AppData\Roaming\Typora\typora-user-images\image-20200709235231840.png)
 
 
 
@@ -212,9 +212,7 @@ PyObject_Malloc(size_t nbytes)
         }
 ```
 
-
-
-![image.png](https://i.loli.net/2020/06/06/Du96sNnrCxFyI3S.png)
+![](https://img2020.cnblogs.com/blog/778496/202007/778496-20200709235605560-1980058094.png)
 
 
 
@@ -321,7 +319,7 @@ PyObject_Free(void *p)
 
 每释放一个block，该blcok就会变成`pool->freeblock`的头结点， 假设已经连续分配了5块, 第1块和第4块被释放，此时的内存图示如下：
 
-![image.png](https://i.loli.net/2020/06/06/9cMYegzjWnwtfIh.png)
+![](https://img2020.cnblogs.com/blog/778496/202007/778496-20200709235755308-2109043929.png)
 
 *此时再一个block分配调用进来, 执行分配, 进入的逻辑是`代码-1`*
 
@@ -418,7 +416,7 @@ arena_object的作用
 - **pool_header和管理的blocks内存是一块连续的内存** => pool_header被申请时，其管理的的block集合的内存一并被申请 `uint maxnextoffset;         /* largest valid nextoffset   */`
 - **arena_object 和其管理的内存是分离的** => arena_object被申请时，其管理的pool集合的内存没有被申请，而是在某一时刻建立关系的
 
-![image.png](https://i.loli.net/2020/06/06/KudLt76QrnaXVie.png)
+![](https://img2020.cnblogs.com/blog/778496/202007/778496-20200709235935827-271800889.png)
 
 ### arena的两种状态
 
