@@ -1,4 +1,4 @@
-## Linux 主要目录
+Linux 主要目录
 
 | /           | 根目录，在 linux 下有且只有一个根目录，所有的东西都是从这里开始 |
 | ----------- | ------------------------------------------------------------ |
@@ -10,7 +10,7 @@
 | /lib        | 系统使用的函数库的目录，程序在执行过程中，需要调用一些额外的参数时需要函数库协助 |
 | /lost+fount | 系统异常产生错误时，会将一些遗失的片段放置在此目录下         |
 | /opt        | 给主机额外安装软件所存放的目录                               |
-| /proc       | 此目录的数据都在内存中，如系统核心，外部设备，网络状态，由于数据都存放于内存中，所以不占用磁盘空间，比较重要的文件， 系统内存的映射目录，提供内核和进程信息有：/proc/cpuinfo、/proc/interrupts、/proc/dma、/proc/ioports、/proc/net/* 等 |
+| /proc       | **此目录的数据都在内存中**，如系统核心，外部设备，网络状态，由于数据都存放于内存中，所以不占用磁盘空间，比较重要的文件， 系统内存的映射目录，提供内核和进程信息，以文件系统的方式为访问系统内核数据的操作提供接口有：/proc/cpuinfo、/proc/interrupts、/proc/dma、/proc/ioports、/proc/net/* 等 |
 | /root       | 系统管理员的家目录                                           |
 | /sbin       | 放置系统管理员使用的可执行命令，如：fdisk,shutdown, mount，与 /bin 不同的是，这几个目录是给系统管理员 root 使用的命令，一般用户只能"查看"而不能设置和使用 |
 | /tmp        | 一般用户或正在执行的程序临时存放文件的目录，任何人都可以访问，重要数据不可放置在此目录下 |
@@ -25,11 +25,33 @@
 - /usr/share/doc：系统说明文件存放目录
 - /usr/share/man：程序说明文件存放目录
 
-
-
 - /var/log：随时更改的日志文件
 - /var/spool/mail：邮件存放的目录
 - /var/run：程序或服务启动后，其 PID 存放在该目录下
+
+查看Linux内核版本信息
+
+```shell
+cat /proc/version
+
+uname     # 查看系统名称
+
+uname -a   # 获取详细信息
+
+uname -r
+```
+
+查看Linux系统版本信息
+
+```shell
+cat /ect/issue
+
+cat /etc/lsb-release
+
+lsb-release -a
+```
+
+
 
 ## 常用Linux命令
 
@@ -468,11 +490,13 @@ ps -ef | grep defunct |grep -v grep | wc -l
 # 查看所有运行的进程
 ps aux | less
 
-# 查看某进程下的线程
+# 查看某进程下的线程  
 ps -ef | grep redis-sever
 # ->redis-server pid:12400
 ps -T -p 12400
 # ps命令的“-T”参数表示显示线程（Show threads, possibly with SPID column.）“SID”栏表示线程ID，而“CMD”栏则显示了线程名称
+# 动态查看进程下的线程状态
+top -H -p 12400
 ```
 
 ![这里写图片描述](https://img-blog.csdn.net/20180307172053108?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDg3MDUxOA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
@@ -555,6 +579,57 @@ Linux中的3种重定向
 
 ## 网络相关
 
+### netstat
+
+常用参数-anplt
+
+- -a 显示所有活动的连接以及本机侦听的TCP、UDP端口
+- -l 显示监听的server port
+- -n 直接使用IP地址，不通过域名服务器
+- -p 正在使用Socket的程序PID和程序名称
+- -r 显示路由表
+- -t 显示TCP传输协议的连线状况
+- -u 显示UDP传输协议的连线状况
+- -w 显示RAW传输协议的连线状况
+
+
+```shell
+# 服务端查看当前TCP 半连接队列的大小
+netstat -antp | grep SYN_RECV | wc -l
+# 观察半连接队列溢出的情况
+netstat -s | grep "SYNs to LISTEN"
+# 查看TCP全连接队列是否溢出
+netstat -s | grep overflowed
+```
+
+### ss
+
+常用参数和netstat类似，如-anp
+
+- -a显示所有的sockets
+- -l显示正在监听的
+- -n显示数字IP和端口，不通过域名服务器
+- -p显示使用socket的对应的程序
+- -t只显示TCP sockets
+- -u只显示UDP sockets
+- -4 -6 只显示v4或v6V版本的sockets
+- -s打印出统计信息。这个选项不解析从各种源获得的socket。对于解析/proc/net/top大量的sockets计数时很有效
+- -0 显示PACKET sockets
+- -w 只显示RAW sockets
+- -x只显示UNIX域sockets
+- -r尝试进行域名解析，地址/端口
+
+
+```shell
+# 查看某个端口全连接队列的使用情况和最大值
+ss -lnt | grep port
+
+```
+
+`ss`比`netstat`快的主要原因是，`netstat`是遍历`/proc`下面每个PID目录，`ss`直接读`/proc/net`下面的统计信息。所以ss执行的时候消耗资源以及消耗的时间都比`netstat`少很多。当服务器的socket连接数量非常大时（如上万个），无论是使用netstat命令还是直接`cat /proc/net/tcp`执行速度都会很慢，相比之下`ss`可以节省很多时间。**ss快的秘诀在于，它利用了TCP协议栈中`tcp_diag`，这是一个用于分析统计的模块，可以获得Linux内核中的第一手信息。如果系统中没有`tcp_diag`，ss也可以正常运行，只是效率会变得稍微慢但仍然比netstat要快。**
+
+### iptables
+
 **使用iptables 写一条规则：把来源IP为192.168.1.101访问本机80端口的包直接拒绝**
 
 > iptables -I INPUT -s 192.168.1.101 -p tcp --dport 80 -j REJECT
@@ -566,6 +641,8 @@ Linux中的3种重定向
 使用iptables-restore反重定向回来：
 
 > iptables-restore < 1.ipt
+
+### rsync
 
 **rsync 同步命令中，下面两种方式有什么不同呢？**
 
@@ -617,7 +694,7 @@ dig @8.8.8.8 www.baidu.com#使用谷歌DNS解析百度
 
 
 
-**[tcpdump抓包工具](https://juejin.im/post/5e64571bf265da57104393a1)**
+### [tcpdump抓包工具](https://juejin.im/post/5e64571bf265da57104393a1)
 
 >  $ tcpdump -i eth0 -nn -s0 -v port 80 -w test.pcap
 
@@ -641,7 +718,7 @@ dig @8.8.8.8 www.baidu.com#使用谷歌DNS解析百度
 
 > tcpdump -i eth0 -s0 -l port 80 | grep 'Server:'
 
-### 硬链接和软连接的本质区别
+## 硬链接和软连接的本质区别
 
 参考:[理解 Linux 的硬链接与软链接](https://www.ibm.com/developerworks/cn/linux/l-cn-hardandsymb-links/index.html)
 
