@@ -5,7 +5,7 @@ Linux 主要目录
 | /bin        | 可执行二进制文件的目录，如常用的命令，ls, tar, mv, cat..     |
 | /boot       | 放置linux系统启动时用到的文件，linux的内核文件/boot/vmlinuz，系引导管理器/boot/grub |
 | /dev        | 存放linux系统下的设备文件，常用的是挂载光驱 mount /dev/chrom /mnt<br />/dev/ttl 表示终端  ， /dev/null 表示无底洞垃圾桶 |
-| /etc        | 系统配置文件存放的目录，不建议在此目录下存放可执行文件       |
+| /etc        | 系统配置文件存放的目录，保存用户组，密码文件(shadow， passwd)，不建议在此目录下存放可执行文件， |
 | /home       | 用户家目录，每个用户有自己的目录 ~表示当前用户的家目录       |
 | /lib        | 系统使用的函数库的目录，程序在执行过程中，需要调用一些额外的参数时需要函数库协助 |
 | /lost+fount | 系统异常产生错误时，会将一些遗失的片段放置在此目录下         |
@@ -73,10 +73,10 @@ lsb-release -a
 
 ### [Linux查找命令](https://www.jianshu.com/p/72c579528337)
 
-- find
-- locate
-- grep
-- which
+- find        查看文件命令，可以使用正则
+- locate    查找文件
+- grep      可以在文本中查找内容
+- which   
 - whereis
 
 ### **归档管理：tar**
@@ -254,6 +254,91 @@ C:\Users\asus\Desktop\review\testlinuk
 3: sdfsdf
 13:sdfsd
 ```
+
+### 创建用户(更改密码，删除用户)
+
+参考[史上最详细 Linux 用户与用户组知识](https://zhuanlan.zhihu.com/p/75138904)
+
+添加用户， 在`root`权限下，`useradd`只是创建了一个用户名，并没有在/home目录下创建同名文件，也没有创建密码，因此利用这个用户登录系统是登陆不了的，为了避免这种情况，使用如下创建方式，添加 `-m`属性，会在/home目录下创建同名文件夹
+
+```shell
+# 添加用户 -m属性会在/home目录下创建同名文件
+useradd -m username
+# 设置该用户密码
+passwd username 
+# 删除用户
+userdel -r username
+```
+
+创建用户方式二：
+
+```shell
+# 直接利用adduser创建新用户()  会自动在/home目录下创建同名文件
+adduser username  
+```
+
+案例：
+
+```shell
+# -d 用户所在目录
+# -m 如果/home目录下没有则创建
+# -g 指定用户组，便于管理
+useradd test01 -d /home/test02 -m -g users
+```
+
+删除用户
+
+```shell
+userdel username
+
+# -r属性，删除包括对应的主目录
+userdel -r username
+```
+
+>  创建新用户后，同时会在etc目录下的passwd文件中添加这个新用户的相关信息 cat /etc/passwd 查看最后一行就是新增的用户（tail -1 /etc/passwd）
+
+```shell
+# 用户名:用户密码:用户ID:用户组ID:用户名称:用户主目录:用户所使用shell
+test01:x:1003:1003::/home/test01:/bin/sh
+```
+
+注意：由于 passwd 不再保存密码信息，所以用 x 占位代表。**为安全起见，用户真实的密码采用 MD5 哈希算法加密后，保存在 / etc/shadow 配置文件中，该文件只有 root 用户可以读取。** 与`passwd`文件类型，`shadow`文件也是每行定义和保存一个账户的相关信息，第一个字段为用户账户名，第二个字段为账户的秘密。(加密哈希算法：1表示MD5；6表示SHA-512；5表示SHA-256)[Linux用户密码文件/etc/shadow相关](https://www.cnblogs.com/diantong/p/10229900.html)
+
+[Linux下的密码Hash——加密方式与破解方法的技术整理]([https://3gstudent.github.io/3gstudent.github.io/Linux%E4%B8%8B%E7%9A%84%E5%AF%86%E7%A0%81Hash-%E5%8A%A0%E5%AF%86%E6%96%B9%E5%BC%8F%E4%B8%8E%E7%A0%B4%E8%A7%A3%E6%96%B9%E6%B3%95%E7%9A%84%E6%8A%80%E6%9C%AF%E6%95%B4%E7%90%86/](https://3gstudent.github.io/3gstudent.github.io/Linux下的密码Hash-加密方式与破解方法的技术整理/))
+
+切换用户命令 
+
+```shell
+# switch user
+su username
+```
+
+#### 设置账户属性 usermod
+
+> usermode [option] username
+
+改变用户账户名
+
+```shell
+usermod -l newname oldname
+# usermod -l test02 test01
+```
+
+注意该命令并没有修改/home/test01 --> /home/test02, 需要执行以下命令
+
+```shell
+usermod -d /home/test02 test02
+mv /home/test01 /home/test02
+```
+
+查看用户的uid,gid
+
+```shell
+id test01
+# > uid=1003(test01) gid=1003(test01) groups=1003(test01)
+```
+
+
 
 ### ps (Process Status)
 

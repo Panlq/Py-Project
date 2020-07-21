@@ -316,9 +316,68 @@ b(x)  ==> y = 2x + 5
 
 
 
-### Python中的类方法和实例方法的区别
+### Python中的类方法和实例方法，类方法的区别
 
-1.静态方法是在程序加载时生成内存的，实例方法在程序运行中生成内存，
+实例方法、静态方法和类方法，三种方法在内存中都归属于类，区别在于调用方式不同
+
+- 实例方法：由对象调用；至少一个self参数；执行实例方法时，自动将调用该方法的对象赋值给self；
+- 类方法：由类调用； 至少一个cls参数；执行类方法时，自动将调用该方法的类赋值给cls；
+- 静态方法：由类调用；无默认参数；
+
+**总结：这三种方法，均属于类，在内存中只有一份，区别在于调用者不同，调用方法时自动传入的参数不同。**实例化对象的时候实例维护各自的实例属性，并带有指向实例方法的指针指向类中该方法的实现
+
+1. 静态方法调用使用类名.方法名调用的，所以如果子类继承中调用父类的某个与父类静态方法有关方法，其使用的属性是父类的属性
+2. 静态方法一般是用在与实例对象，或者类无关的一些判断
+3. 类方法一般用在工具类上，不需要一直实例化对象，可以直接用一个类管理所有工具函数
+
+
+
+1. 实例属性属于对象， 实例属性在每个对象中都要保存一份，实例可以调用类属性
+2. 类属性属于类， 类属性在内存中只保存一份， 类不能调用实例属性
+
+```python
+from math import sqrt
+
+
+class Triangle(object):
+
+    def __init__(self, a, b, c):
+        self._a = a
+        self._b = b
+        self._c = c
+
+    @staticmethod
+    def is_valid(a, b, c):
+        return a + b > c and b + c > a and a + c > b
+
+    def perimeter(self):
+        return self._a + self._b + self._c
+
+    def area(self):
+        half = self.perimeter() / 2
+        return sqrt(half * (half - self._a) *
+                    (half - self._b) * (half - self._c))
+
+
+def main():
+    a, b, c = 3, 4, 5
+    # 静态方法和类方法都是通过给类发消息来调用的
+    if Triangle.is_valid(a, b, c):
+        t = Triangle(a, b, c)
+        print(t.perimeter())
+        # 也可以通过给类发消息来调用对象方法但是要传入接收消息的对象作为参数
+        # print(Triangle.perimeter(t))
+        print(t.area())
+        # print(Triangle.area(t))
+    else:
+        print('无法构成三角形.')
+
+
+if __name__ == '__main__':
+    main()
+```
+
+
 
 ### [python中的None和空字符比较](https://www.jianshu.com/p/627232777efd)
 

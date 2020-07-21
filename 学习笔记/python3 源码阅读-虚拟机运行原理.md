@@ -461,6 +461,18 @@ typedef struct _frame{
 
 **每一个 PyFrameObject对象都维护了一个 PyCodeObject对象，这表明每一个 PyFrameObject中的动态内存空间对象都和源代码中的一段Code相对应。**
 
+每当在解释器中做一次函数调用时，会创建一个新的`PyFrameObject`对象，这个对象就是当前函数调用的栈帧对象。
+
+### 从调用栈理解Python协程的运行流程
+
+具体可以参考[zpoint'blog](https://github.com/zpoint/CPython-Internals/blob/master/Interpreter/frame/frame_cn.md). 以下为个人小结。
+
+python的`yield`是用底层虚拟机的栈状态切换来实现的，实现机制借鉴Lua5.2 的协程，
+
+`CPython`的`yield`实现是基于栈和`Frame`, `PyFrameObject`是`Cython`中的一个模拟栈帧的对象，`yield`对应一个生成器对象`genobject.c` `yield`在虚拟机中对应一个操作码 `YIELD_VALUE`, 即虚拟机对应的字节码， 这样就可以很好的理解，上下文是如何保存的了，一个对象的状态保存和切换，使用一些属性来做，在虚拟机中很好实现。`CPython`的`yield`的确是单线程，或者说，其实`CPython`把`yield`和对应的生成器只是转化为一段字节码，`CPytho`n虚拟机的字节码执行是单线程的。
+
+yield的实现我个人理解为中断机制，当一个生成器对象初始化的时候就会把对应的参数，变量值放入堆中，当加载到yield 的时候，会先执行一个 `LOAD FAST` 的操作码，获取yield所要返回的值如果没有就是None, 将其压入栈中， 接着由于`LOAD FAST`对应着`FAST DISPATCH`的机制，就会继续执行下一个操作码 `YIELD_VALUE` 紧接着 `POP_TOP` 推出栈顶元素。此时被调用的`Frame`（当前的迭代器对象）并没有被释放而是进入一个`zombie`的状态，下一次同个代码段执行时, 这个 frame 对象会优先被复用。
+
 #### 3.2.1 栈帧的获取，工作中会用到
 
 可以通过sys._getframe([depth])， 获取指定深度的`PyFrameObject`对象
@@ -516,11 +528,11 @@ Copyif (_Py_atomic_load_relaxed(&ceval->gil_drop_request)) {
 /* Check for asynchronous exceptions. */
 ```
 
-#### [深入了解Python GIL]()
+#### [深入了解Python GIL](https://www.cnblogs.com/panlq/p/13081161.html)
 
 
 
-参考: 
+## 参考资料: 
 
 [python 源码分析 基本篇](https://blog.csdn.net/qq_31720329/article/details/86751412)
 
