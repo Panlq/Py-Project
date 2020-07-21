@@ -478,7 +478,41 @@ In [16]: 'hello_' + 'python' is 'hello_python'
 Out[16]: True
 ```
 
+### 2.6 free_list 列表对象缓冲池
 
+列表对象如下![PyListObject](http://wklken.me/imgs/python-source/PyListObject.png)
+
+```c++
+typedef struct {
+    PyObject_VAR_HEAD    // 变长对象
+
+    PyObject **ob_item;  // 指向元素的收地址 list[0] = ob_item[0]
+
+    Py_ssize_t allocated;// 列表分配的空间(容量), ob_size为已使用的空间
+} PyListObject;
+```
+
+有如下关系:
+
+```
+0 <= ob_size <= allocated
+len(list) == ob_size
+ob_item == NULL implies ob_size == allocated == 0
+```
+
+当创建列表对象的时候会先判断缓冲池中是否为空，是的话从缓冲池中获取（复用），否则从内存中分配，然后初始化数据。
+
+```c++
+#ifndef PyList_MAXFREELIST
+#define PyList_MAXFREELIST 80   # 默认维护80个PyObjectList
+#endif
+static PyListObject *free_list[PyList_MAXFREELIST];
+static int numfree = 0;
+```
+
+**初始化的时候`numfree=0` ， 在一个`PyObjectList`对象被销毁的时候会先删除列表元素，然后看缓冲池是否满，不满则把列表对象放入缓冲池中复用。**
+
+![PyListObjectPool](http://wklken.me/imgs/python-source/PyListObjectPool.png)
 
 ### 2.6 小结：
 

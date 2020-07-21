@@ -269,11 +269,58 @@ print(findall("helloworldhellopythonhelloc++hellojava", "hello"))
 
 参考:[Python函数参数默认值的陷阱](http://cenalulu.github.io/python/default-mutable-arguments/)
 
+### 浅拷贝与深拷贝
+
+浅拷贝是对对象的顶层拷贝，拷贝了引用并么有拷贝内容，会申请一个新地址存储别名，指向的数据内存地址是一样的，浅拷贝对不可变类型和可变类型的Copy不同
+
+- 浅拷贝的有
+
+  - **变量的赋值，`copy.copy()`, 列表的切片，`dict.copy()`**
+
+  - 对于可变类型，`copy.copy()`会进行浅拷贝  id() 不同
+  - 对于不可变类型，`copy.copy()`不会拷贝，仅仅是指向 id() 一致，相当于引用
+
+- 深拷贝是对一个对象所有层次的拷贝，所有的数据都会重新拷贝到新的地址空间
 
 
 
+### 闭包
 
-[python中的None和空字符比较](https://www.jianshu.com/p/627232777efd)
+> 闭包指**延伸了作用域的函数**，其中包**含函数定义体中引用、但是不在定义体中定义的非全局变量**。函数是不是匿名的没有关系，关键是它能访问定义体之外定义的非全局变量。   闭包，基础是函数的嵌套，本身也是一个函数，会保留定义函数时存在的自由变量（free variable）的绑定，这样调用函数时，虽然定义作用域不可用，但是仍然能使用那些绑定《流畅的Python》
+
+
+
+```python
+def line_func(a, b):
+    # 一次线性函数构造器
+    def inner(x):
+        return a * x + b
+    return inner
+
+a = line_func(1, 1)
+b = line_func(2, 5)
+a(x)  ==> y = x + 4
+b(x)  ==> y = 2x + 5
+
+```
+
+由于闭包引用了外部函数的局部变量，则外部函数的局部变量没有及时释放，消耗内存
+
+> 变量调用的顺序LEGB, L：本地作用域；E：上一层结构中def或lambda的本地作用域；G：全局作用域；B：内置作用域”（Local，Enclosing，Global，Builtin），按顺序查找
+
+闭包修改引用变量的值要声明`nonlocal`
+
+
+
+集合的交集intersection（&），并集union（|），差集difference（-）， 对称差集sysmmetric_difference（^）
+
+
+
+### Python中的类方法和实例方法的区别
+
+1.静态方法是在程序加载时生成内存的，实例方法在程序运行中生成内存，
+
+### [python中的None和空字符比较](https://www.jianshu.com/p/627232777efd)
 
 None是python中的一个特殊的常量，表示一个空的对象，空值是python中的一个特殊值。数据为空并不代表是空对象，例如[],''等都不是None。None和任何对象比较返回值都是False，除了自己。
 

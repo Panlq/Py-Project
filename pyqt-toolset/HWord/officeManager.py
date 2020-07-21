@@ -5,6 +5,7 @@ https://stackoverflow.com/questions/56242873/how-to-get-the-revision-number-of-a
 https://ios.developreference.com/article/12766171/Access+built-in+document+properties+information+without+opening+the+workbook
 """
 import os
+import sys
 from enum import Enum
 import win32com.client as win32c
 
@@ -56,6 +57,7 @@ class OfficeMgr(object):
     def __init__(self):
         self.wd = None
         self.type = None
+        self.client = None
         self.latestFile = ''
     
     def initType(self, type_):
@@ -63,7 +65,7 @@ class OfficeMgr(object):
             self.close()
         self.type = type_
         self.client = win32c.gencache.EnsureDispatch(FileType.match(self.type))
-        self.client.Visible = 0  # 
+        self.client.Visible = False  # 
 
     def run(self, file):
         try:
@@ -72,15 +74,18 @@ class OfficeMgr(object):
             #     self.__wd.Close()
             if self.type == FileType.Word:
                 self.wd = self.client.Documents.Open(os.path.realpath(file))
+                self.builtInPro = self.wd.BuiltInDocumentProperties
             elif self.type == FileType.Excel:
                 self.wd = self.client.Workbooks.Open(os.path.realpath(file))
+                self.builtInPro = self.wd.BuiltinDocumentProperties
             else:
                 pass
-            self.builtInPro = self.wd.BuiltinDocumentProperties
             return self
         except Exception as e:
+            os.remove(os.path.realpath(file))
+            print(f'正在删除异常文件：{file}')
             if self.wd:
-                self.wd.Close(True)
+                self.wd.Close(0)
                 self.client.Quit()
             raise e
 
@@ -101,12 +106,15 @@ class OfficeMgr(object):
     
     def set(self, key, val):
         p = Properties.match(key)
-        self.wd.BuiltinDocumentProperties(p).value = val
-        self.wd.Close(True)
+        if self.type == FileType.Word:
+            self.wd.BuiltInDocumentProperties(p).value = val
+            self.wd.Close()
+        elif self.type == FileType.Excel:
+            self.wd.BuiltinDocumentProperties(p).value = val
+            self.wd.Close(True)
 
     def close(self):
-        if self.wd and self.client:
-            self.wd.Close(True)
+        if self.client:
             self.client.Quit()
 
     

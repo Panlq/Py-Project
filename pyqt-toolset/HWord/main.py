@@ -21,6 +21,7 @@ class MyMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MyMainWindow, self).__init__()
         self.setupUi(self)
         self.rootdir = ''
+        self.fileSuffixType = ''
         self.step =0
         self.fileDict = {}
         self.progressBar.setValue(self.step)
@@ -176,6 +177,9 @@ class MyMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return False
         if self.keyword == '':
             QMessageBox.warning(self, '查询提示', '输入的关键字不能为空', QMessageBox.Yes)
+            return False
+        if self.fileSuffixType == '':
+            QMessageBox.warning(self, '查询提示', '请选择文件后缀', QMessageBox.Yes)
             return False
 
         self.searchButton.setDisabled(True)
