@@ -1,8 +1,9 @@
 """
-[Python and Microsoft Office – Using PyWin32](http://www.blog.pythonlibrary.org/2010/07/16/python-and-microsoft-office-using-pywin32/)
+
 参考文件
 https://stackoverflow.com/questions/56242873/how-to-get-the-revision-number-of-a-word-document-using-python
 https://ios.developreference.com/article/12766171/Access+built-in+document+properties+information+without+opening+the+workbook
+
 """
 import os
 import sys

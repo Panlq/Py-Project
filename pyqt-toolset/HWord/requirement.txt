@@ -1,0 +1,12 @@
+Package            Version
+------------------ -------------------
+pipenv             2020.6.2
+pyinstaller        4.0.dev0+8714423aa5
+PyQt5              5.15.0
+PyQt5-sip          12.8.0
+pyqt5-tools        5.15.0.1.7
+pywin32            228
+pywin32-ctypes     0.2.0
+setuptools         41.2.0
+six                1.15.0
+
