@@ -3,7 +3,6 @@
 # __author__ = '__JonPan__'
 
 
-
 class RedPrint(object):
     def __init__(self, name):
         self.name = name
@@ -21,5 +20,6 @@ class RedPrint(object):
         if url_prefix == None:
             url_prefix = '/' + self.name
         for f, rule, options in self.mound:
-            endpoint = self.name + '_' + options.pop('endpoint', f.__name__)
+            # 不能用.相加，
+            endpoint = self.name + '+' + options.pop('endpoint', f.__name__)
             bp.add_url_rule(url_prefix + rule, endpoint, f, **options)

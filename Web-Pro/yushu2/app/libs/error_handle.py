@@ -11,13 +11,13 @@ from app.libs.error_code import *
 
 
 class Success(APIException):
-    code = 201
+    code = 201   # Created
     msg = 'OK'
     error_code = REQUEST_SUC
 
 
 class DeleteSuccess(Success):
-    code = 202
+    code = 202   # 204 表示删除成功 不返回内容NO CONTENT，为了保持统一，所以使用202
     error_code = REQUEST_FAIL
 
 
@@ -28,7 +28,7 @@ class ServerError(APIException):
 
 
 class ClientTypeError(APIException):
-    code = 400
+    code = 400  # Bad Request
     msg = 'clients is invalid'
     error_code = CLIENTTYPE_ERROR
 
@@ -45,8 +45,20 @@ class NotFound(APIException):
     error_code = NOT_FOUND
 
 
+class MethodNotAllowed(APIException):
+    code = 405   # Method Not Allowed
+    msg = 'the request method is not allowed o_o'
+    error_code = NOT_FOUND
+
+
 class AuthFailed(APIException):
-    code = 401
+    code = 401   # 授权失败 Unauthorized
+    msg = 'not auth'
+    error_code = AUTH_FAILED
+
+
+class Forbidden(APIException):
+    code = 403   # 无权限访问
     msg = 'not auth'
     error_code = AUTH_FAILED
 

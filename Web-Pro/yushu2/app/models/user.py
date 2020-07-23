@@ -9,6 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.libs.error_handle import NotFound, AuthFailed
 from app.models.base import Base, db
+from app.libs.scope import level2str
 
 
 class User(Base):
@@ -41,7 +42,7 @@ class User(Base):
             user.nickname = nickname
             user.email = accout
             user.password = secret
-            
+
             db.session.add(user)
 
     @staticmethod
@@ -49,5 +50,5 @@ class User(Base):
         user = User.query.filter_by(email=email).first_or_404()
         if not user.check_password(password):
             return AuthFailed()
-        scope = 'AdminScope' if user.auth == 2 else 'UserScope'
+        scope = level2str.get(user.auth)
         return {'uid': user.id, 'scope': scope}

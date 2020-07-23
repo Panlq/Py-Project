@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # __author__ = '__JonPan__'
 
-from app.app import create_app
+from app import create_app
 
 
 app = create_app()

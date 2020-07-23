@@ -2,46 +2,25 @@
 # -*- coding: utf-8 -*-
 # __author__ = '__JonPan__'
 
+from datetime import date
+from flask import Flask as _Flask
+from flask.json import JSONEncoder as _JSONEncoder
 
-from flask import Flask, current_app
-from app.api.v1 import init_blueprint_v1
-from app.libs.error import APIException, HTTPException
 from app.libs.error_handle import ServerError
 
 
-def register_blueprint(app):
-    app.register_blueprint(init_blueprint_v1(), url_prefix='/v1')
+class JSONEncoder(_JSONEncoder):
+    """
+    重写json序列化， 让User 等实例对象可序列化
+    """
+    def default(self, o):
+        if hasattr(o, 'keys') and hasattr(o, '__getitem__'):
+            return dict(o)
+        if isinstance(o, date):
+            return o.strftime('%Y-%m-%d')
+        # 教程返回的是ServerError 有问题
+        super(JSONEncoder, self).default(o)
 
 
-def framework_error(e):
-    if isinstance(e, APIException):
-        return e
-    elif isinstance(e, HTTPException):
-        code = e.code
-        msg = e.description
-        error_code = 1007
-        return APIException(msg, code, error_code)
-
-    else:
-        if not current_app.config['DEBUG']:
-            return ServerError()
-        else:
-            raise e
-
-
-def register_plugin(app):
-    from app.models.base import db
-    db.init_app(app)
-    db.create_all(app=app)
-    # with app.app_context():
-    #     db.create_all()
-
-
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object('app.config.setting')
-    app.config.from_object('app.config.secure')
-    register_blueprint(app)
-    app.errorhandler(Exception)(framework_error)
-    register_plugin(app)
-    return app
+class Flask(_Flask):
+    json_encoder = JSONEncoder

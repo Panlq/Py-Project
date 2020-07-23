@@ -8,8 +8,9 @@ from flask_httpauth import HTTPBasicAuth
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer,\
                         BadSignature, SignatureExpired
 
-from app.libs.error_handle import AuthFailed
+from app.libs.error_handle import AuthFailed, Forbidden
 from app.libs.error_code import TOKEN_EXPIRED, TOKEN_INVALID
+from app.libs.scope import is_in_scope
 
 
 User = namedtuple('User', ['uid', 'ac_type', 'scope'])
@@ -24,9 +25,10 @@ class CryptoMgr:
             expiration = current_app.config['TOKEN_EXPIRATION']
         return Serializer(current_app.config['SECRET_KEY'],
                        expires_in=expiration)
+
     @staticmethod
-    def generate_token(uid, ac_type, scope=None, expiration=7200):
-        s = CryptoMgr.gen_serialzer()
+    def generate_token(uid, ac_type, scope=None, expiration=None):
+        s = CryptoMgr.gen_serialzer(expiration)
         token = s.dumps({
             'uid': uid,
             'type': ac_type,
@@ -58,5 +60,13 @@ def verify_auth(token, p):
     if not user_info:
         return False
     else:
+        check_access(user_info.scope)
         g.user = user_info
         return True
+
+
+def check_access(scope: 'str'):
+    # 检测访问权限，是否越级访问
+    allow = is_in_scope(scope, request.endpoint)
+    if not allow:
+        raise Forbidden()

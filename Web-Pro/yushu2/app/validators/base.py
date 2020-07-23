@@ -16,6 +16,9 @@ class BaseForm(Form):
     """
 
     def __init__(self):
+        # 当body中没有数据的时候且 header中
+        # contentType: application/json的时候request.json获取不到会报错
+        # 使用以下方式不会报错
         data = request.get_json(silent=True)
         kwargs = request.args.to_dict()
         super(BaseForm, self).__init__(data=data, **kwargs)

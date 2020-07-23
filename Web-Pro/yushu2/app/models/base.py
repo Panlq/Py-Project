@@ -57,6 +57,9 @@ class Base(db.Model):
     def __init__(self):
         self.create_time = int(datetime.now().timestamp())
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
     def set_attrs(self, attrs_dict):
         for key, value in attrs_dict.items():
             if hasattr(self, key) and key != 'id':
@@ -70,3 +73,17 @@ class Base(db.Model):
 
     def delete(self):
         self.status = 0
+
+    def keys(self):
+        return self.fields if hasattr(self, 'fields') else []
+
+    def hide(self, *keys):
+        for key in keys:
+            self.fields.remove(key)
+        return self
+
+    def append(self, *keys):
+        for key in keys:
+            self.fields.append(key)
+        return self
+
