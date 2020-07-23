@@ -3,7 +3,7 @@
 # __author__ = '__JonPan__'
 
 from flask import Blueprint
-from . import user, book
+from . import user, book, client, token
 
 
 def init_blueprint_v1():
@@ -11,5 +11,6 @@ def init_blueprint_v1():
 
     user.api.register(bp_v1)
     book.api.register(bp_v1)
-    
+    client.api.register(bp_v1)
+    token.api.register(bp_v1)
     return bp_v1

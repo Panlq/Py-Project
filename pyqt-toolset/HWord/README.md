@@ -8,4 +8,4 @@ https://bettersolutions.com/excel/workbooks/vba-properties.htm
 
 
 
-pyinstaller -F -w --i "C:\\Users\\asus\\Pictures\\Saved Pictures\\avat6464ar.jpg" main.py
+pyinstaller -F -w --i "./img/aqx2y-3232.ico" main.py

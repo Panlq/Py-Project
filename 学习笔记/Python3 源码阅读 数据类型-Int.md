@@ -86,3 +86,18 @@ cpython 同时也使用了一个全局变量叫做 small_ints 来单例化一部
 static PyLongObject small_ints[NSMALLNEGINTS + NSMALLPOSINTS];
 ```
 
+
+
+### hash(int) 问题
+
+> hash(5) == 5?
+
+hash int 相当于如下操作
+
+```python
+# 针对于64位系统  _PyHASH_BITS=64  32位系统_PyHASH_BITS=31
+def hash(number):
+    return number % (2 ** 61 -1)
+```
+
+[Why does hash() method return short Hash value with int in Python?](https://stackoverflow.com/questions/53194244/why-does-hash-method-return-short-hash-value-with-int-in-python)

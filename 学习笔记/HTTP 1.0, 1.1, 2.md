@@ -98,7 +98,74 @@ HTTP/1.1应该分成两个时代，一个是2014年前，一个是2014年后，�
 
 # HTTP消息头（HTTP headers）![img](https://mmbiz.qpic.cn/mmbiz_png/J0g14CUwaZdCwxNydn5YuT0s7aLuqWCvCl3iaCJeUV6Oa8zESpNKPDicgibjwANs465zibfWwwUQlMZsjciaNicO1Vwg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
-#### 参考：
+### OAuth2.0
+
+几个关键的名字
+
+（1） **Third-party application**：第三方应用程序，本文中又称"客户端"（client），即上一节例子中的"云冲印"。
+
+（2）**HTTP service**：HTTP服务提供商，本文中简称"服务提供商"，即上一节例子中的Google。
+
+（3）**Resource Owner**：资源所有者，本文中又称"用户"（user）。
+
+（4）**User Agent**：用户代理，本文中就是指浏览器。
+
+（5）**Authorization server**：认证服务器，即服务提供商专门用来处理认证的服务器。
+
+（6）**Resource server**：资源服务器，即服务提供商存放用户生成的资源的服务器。它与认证服务器，可以是同一台服务器，也可以是不同的服务器。
+
+#### OAuth的思路
+
+OAuth在"客户端"与"服务提供商"之间，设置了一个授权层（authorization layer）。"客户端"不能直接登录"服务提供商"，只能登录授权层，以此将用户与客户端区分开来。"客户端"登录授权层所用的令牌（token），与用户的密码不同。用户可以在登录的时候，指定授权层令牌的权限范围和有效期。
+
+"客户端"登录授权层以后，"服务提供商"根据令牌的权限范围和有效期，向"客户端"开放用户储存的资料。
+
+#### 运行流程
+
+![OAuth运行流程](https://www.ruanyifeng.com/blogimg/asset/2014/bg2014051203.png)
+
+（A）用户打开客户端以后，客户端要求用户给予授权。
+
+（B）用户同意给予客户端授权。
+
+（C）客户端使用上一步获得的授权，向认证服务器申请令牌。
+
+（D）认证服务器对客户端进行认证以后，确认无误，同意发放令牌。
+
+（E）客户端使用令牌，向资源服务器申请获取资源。
+
+（F）资源服务器确认令牌无误，同意向客户端开放资源。
+
+#### 客户端的授权模式
+
+客户端必须得到用户的授权（authorization grant），才能获得令牌（access token）。OAuth 2.0定义了四种授权方式。
+
+- 授权码模式（authorization code）
+- 简化模式（implicit）
+- 密码模式（resource owner password credentials）
+- 客户端模式（client credentials）
+
+#### 授权码模式
+
+授权码模式（authorization code）是功能最完整、流程最严密的授权模式。它的特点就是通过客户端的后台服务器，与"服务提供商"的认证服务器进行互动。
+
+![授权码模式](https://www.ruanyifeng.com/blogimg/asset/2014/bg2014051204.png)
+
+（A）用户访问客户端，后者将前者导向认证服务器。
+
+（B）用户选择是否给予客户端授权。
+
+（C）假设用户给予授权，认证服务器将用户导向客户端事先指定的"重定向URI"（redirection URI），同时附上一个授权码。
+
+（D）客户端收到授权码，附上早先的"重定向URI"，向认证服务器申请令牌。这一步是在客户端的后台的服务器上完成的，对用户不可见。
+
+（E）认证服务器核对了授权码和重定向URI，确认无误后，向客户端发送访问令牌（access token）和更新令牌（refresh token）。
+
+转自[阮一峰老师-理解OAuth 2.0](https://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
+
+[阮一峰老师-OAuth 2.0 的一个简单解释](http://www.ruanyifeng.com/blog/2019/04/oauth_design.html)
+
+### 参考：
 
 1. [HTTP/2 相比 1.0 有哪些重大改进？](https://www.zhihu.com/question/34074946)
 2. [HTTP/2 对现在的网页访问，有什么大的优化呢？体现在什么地方？ - Leo Zhang的回答 - 知乎]( https://www.zhihu.com/question/24774343/answer/96586977)

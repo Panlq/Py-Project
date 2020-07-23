@@ -3,7 +3,7 @@
 from enum import Enum
 
 
-class CLientType(Enum):
+class ClientTypeEnum(Enum):
     USER_EMAIL = 100
     USER_MOBILE = 201
 
