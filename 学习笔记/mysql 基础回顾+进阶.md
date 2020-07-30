@@ -268,6 +268,24 @@ undo log属于逻辑日志，它记录的是sql执行相关的信息。当发生
 前面曾提到：当事务提交时会调用fsync对redo log进行刷盘；这是默认情况下的策略，修改innodb_flush_log_at_trx_commit参数可以改变该策略，但事务的持久性将无法保证。
  除了事务提交时，还有其他刷盘时机：如master thread每秒刷盘一次redo log等，这样的好处是不一定要等到commit时刷盘，commit速度大大加快。
 
+#### 为什么写入redo log和bin log要用两个阶段提交呢
+
+![img](https://upload-images.jianshu.io/upload_images/15503876-43e8632a3ec3290c.png?imageMogr2/auto-orient/strip|imageView2/2/format/webp)
+
+![pic](http://mysql.taobao.org/monthly/pic/201812/201812-02.png)
+
+[为什么写入redo log和bin log要用两个阶段提交呢](https://www.jianshu.com/p/d0e16db410e4)
+
+[淘宝数据部门-MySQL · 原理介绍 · 再议MySQL的故障恢复](http://mysql.taobao.org/monthly/2018/12/04/)
+
+解释了两阶段提交在高可用复制是会出现的问题。
+
+如果有一个事务已经执行到`binlog`阶段，此时master挂了，就会有一个slave变成master, 此时的master再次执行用户操作的未写入的事物，原本的master恢复变成slave，此时master和slave都存在这个事务，要执行哪一个呢？
+
+**[高可用必杀技–基于RAFT的多副本集群](http://mysql.taobao.org/monthly/2018/12/04/)**
+
+![pic](http://mysql.taobao.org/monthly/pic/201812/201812-05.png)
+
 ### 隔离性（Isolation）
 
 与原子性、持久性侧重于研究事务本身不同，隔离性研究的是不同事务之间的相互影响。隔离性是指，事务内部的操作与其他事务是隔离的，并发执行的各个事务之间不能互相干扰。严格的隔离性，对应了事务隔离级别中的Serializable (可串行化)，但实际应用中出于性能方面的考虑很少会使用可串行化。
