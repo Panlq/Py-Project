@@ -8,6 +8,8 @@ pylint = "*"
 
 [packages]
 django = "==2.2.3"
+markdown = "*"
+pygments = "*"
 
 [requires]
 python_version = "3.7"
