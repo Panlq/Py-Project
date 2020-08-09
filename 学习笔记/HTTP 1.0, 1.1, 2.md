@@ -174,3 +174,4 @@ OAuth在"客户端"与"服务提供商"之间，设置了一个授权层（autho
 5. [HTTP的前世今生-左耳朵耗子](https://coolshell.cn/articles/19840.html)
 6. [HTTP1.0、HTTP1.1 和 HTTP2.0 的区别](https://juejin.im/entry/5981c5df518825359a2b9476)
 7. [如何优雅的谈论HTTP／1.0／1.1／2.0](https://www.jianshu.com/p/52d86558ca57)
+8. [http 和 https 有何区别？如何灵活使用？ - 程序员cxuan的回答 - 知乎 ](https://www.zhihu.com/question/19577317/answer/1157658840)
