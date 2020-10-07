@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=mydevops
+POSTGRES_USER=lBfMlaOtaAatCsWAzOCIDXJXrfIezUUU
+POSTGRES_PASSWORD=JcSbyJK1p3yJuSv9z1vCt4HoxwkBhRmCaOplD8soHHefB9nPhCkxfsnZcIrb8Tvp
