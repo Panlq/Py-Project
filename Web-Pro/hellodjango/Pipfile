@@ -7,7 +7,7 @@ verify_ssl = true
 pylint = "*"
 
 [packages]
-django = "==2.2.13"
+django = "==2.2.24"
 markdown = "*"
 pygments = "*"
 
