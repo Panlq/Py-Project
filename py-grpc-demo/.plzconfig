@@ -1,0 +1,28 @@
+; Please config file
+; Leaving this file as is is enough to use plz to build your project.
+; Please will stay on whatever version you currently have until you run
+; 'plz update', when it will download the latest available version.
+;
+; Or you can uncomment the following to pin everyone to a particular version;
+; when you change it all users will automatically get updated.
+; [please]
+; version = 16.20.4
+
+
+[build]
+path = /opt/homebrew/bin/python3:/usr/local/bin:/usr/bin:/bin
+
+
+[buildconfig]
+buf-version = 1.7.0
+pleasings2-version = 502d7fc5487b0904a78c60b5f645dd4642298211
+
+
+[alias "proto"]
+desc = Generate protobuf 
+cmd = run //tools:proto -- 
+
+
+[alias "protol"]
+desc = change *_pb2.py import path and auto generate __init__.py
+cmd = run //tools:protol --

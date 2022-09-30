@@ -1,0 +1,17 @@
+# buf.yaml文件默认缺省值，
+version: v1                                            #配置的版本，目前可选的值只有 v1/v1beta1
+name: ""                                               #可选参数，定义项目的唯一名称
+deps: []                                               #可选参数，定义proto依赖，也是一个buf module，可以声明多个依赖
+build:                                                 #可选参数，控制buf 构建项目，仅有一个参数 excluedes, 声明要忽略的proto文件夹，当执行生成的时候会跳过
+  excludes: []
+lint:                                                  #一组严格的校验规则，可以根据自己需要进行排除或者增加，使proto文件和生成文件的统一性和可维护性
+  use:
+    - DEFAULT
+  enum_zero_value_suffix: _UNSPECIFIED
+  rpc_allow_same_request_response: false
+  rpc_allow_google_protobuf_empty_requests: false
+  rpc_allow_google_protobuf_empty_responses: false
+  service_suffix: Service
+breaking:                                             #检测不同版本之间的差异，比如当前修改与主版本之间的差异
+  use:
+    - FILE

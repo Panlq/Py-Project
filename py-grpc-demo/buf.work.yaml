@@ -1,0 +1,4 @@
+version: v1
+directories:
+  # 所有proto文件涉及的文件夹，即buf.yaml所在文件夹
+  - api/pb

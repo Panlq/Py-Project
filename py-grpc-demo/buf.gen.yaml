@@ -1,0 +1,10 @@
+version: v1
+plugins:
+  # openapiv2
+  - name: openapiv2
+    out: api/gen/openapi
+
+  - remote: buf.build/protocolbuffers/plugins/python:v3.19.1-1
+    out: api/gen/pb
+  - remote: buf.build/grpc/plugins/python:v1.41.1-1
+    out: api/gen/pb
