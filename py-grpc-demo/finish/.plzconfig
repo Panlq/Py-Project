@@ -17,12 +17,21 @@ path = /opt/homebrew/bin/python3:/usr/local/bin:/usr/bin:/bin
 buf-version = 1.7.0
 pleasings2-version = 502d7fc5487b0904a78c60b5f645dd4642298211
 
+[python]
+moduledir = third_party.python
+disablevendorflags = true
+defaultpiprepo = https://mirrors.aliyun.com/repository/pypi/simple
+
 
 [alias "proto"]
 desc = Generate protobuf 
 cmd = run //tools:proto -- 
 
+[alias "tools"]
+desc = "Download dep tools"
+cmd = run //tools:plz-tools
+
 
 [alias "protol"]
-desc = change *_pb2.py import path and auto generate __init__.py
+desc = Generate protobuf and change *_pb2.py import path and auto generate __init__.py
 cmd = run //tools:protol --

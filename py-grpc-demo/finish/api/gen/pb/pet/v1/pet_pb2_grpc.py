@@ -1,44 +1,41 @@
-"""Client and server classes corresponding to protobuf-defined services."""
+
+'Client and server classes corresponding to protobuf-defined services.'
 import grpc
 from ...pet.v1 import pet_pb2 as pet_dot_v1_dot_pet__pb2
 
 class PetStoreServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    'Missing associated documentation comment in .proto file.'
 
     def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
+        'Constructor.\n\n        Args:\n            channel: A grpc.Channel.\n        '
         self.GetPet = channel.unary_unary('/pet.v1.PetStoreService/GetPet', request_serializer=pet_dot_v1_dot_pet__pb2.GetPetRequest.SerializeToString, response_deserializer=pet_dot_v1_dot_pet__pb2.GetPetResponse.FromString)
         self.PutPet = channel.unary_unary('/pet.v1.PetStoreService/PutPet', request_serializer=pet_dot_v1_dot_pet__pb2.PutPetRequest.SerializeToString, response_deserializer=pet_dot_v1_dot_pet__pb2.PutPetResponse.FromString)
         self.DeletePet = channel.unary_unary('/pet.v1.PetStoreService/DeletePet', request_serializer=pet_dot_v1_dot_pet__pb2.DeletePetRequest.SerializeToString, response_deserializer=pet_dot_v1_dot_pet__pb2.DeletePetResponse.FromString)
         self.PurchasePet = channel.unary_unary('/pet.v1.PetStoreService/PurchasePet', request_serializer=pet_dot_v1_dot_pet__pb2.PurchasePetRequest.SerializeToString, response_deserializer=pet_dot_v1_dot_pet__pb2.PurchasePetResponse.FromString)
 
 class PetStoreServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    'Missing associated documentation comment in .proto file.'
 
     def GetPet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        'Missing associated documentation comment in .proto file.'
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def PutPet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        'Missing associated documentation comment in .proto file.'
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def DeletePet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        'Missing associated documentation comment in .proto file.'
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def PurchasePet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        'Missing associated documentation comment in .proto file.'
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -49,7 +46,7 @@ def add_PetStoreServiceServicer_to_server(servicer, server):
     server.add_generic_rpc_handlers((generic_handler,))
 
 class PetStoreService(object):
-    """Missing associated documentation comment in .proto file."""
+    'Missing associated documentation comment in .proto file.'
 
     @staticmethod
     def GetPet(request, target, options=(), channel_credentials=None, call_credentials=None, insecure=False, compression=None, wait_for_ready=None, timeout=None, metadata=None):

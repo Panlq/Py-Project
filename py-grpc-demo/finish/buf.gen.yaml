@@ -3,6 +3,9 @@ plugins:
   # openapiv2
   - name: openapiv2
     out: api/gen/openapi
+  # protoc-gen-twirpy
+  - name: twirpy
+    out: api/gen/pb
 
   - remote: buf.build/protocolbuffers/plugins/python:v3.19.1-1
     out: api/gen/pb

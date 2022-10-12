@@ -1,4 +1,5 @@
-"""Generated protocol buffer code."""
+
+'Generated protocol buffer code.'
 from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
@@ -17,7 +18,7 @@ PAYMENT_PROVIDER_APPLE = 3
 _ORDER = DESCRIPTOR.message_types_by_name['Order']
 Order = _reflection.GeneratedProtocolMessageType('Order', (_message.Message,), {'DESCRIPTOR': _ORDER, '__module__': 'payment.v1alpha1.payment_pb2'})
 _sym_db.RegisterMessage(Order)
-if _descriptor._USE_C_DESCRIPTORS == False:
+if (_descriptor._USE_C_DESCRIPTORS == False):
     DESCRIPTOR._options = None
     DESCRIPTOR._serialized_options = b'Z\x05./gen'
     _PAYMENTPROVIDER._serialized_start = 272

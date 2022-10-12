@@ -1,0 +1,9 @@
+grpcio==1.47.0
+grpcio-tools==1.47.0
+protobuf==3.20.1
+twirp==0.0.7
+google==3.0.0
+google-api==0.1.12
+protoc-gen-validate==0.4.2
+protoletariat==0.9.4
+google-api-python-client==2.31.0

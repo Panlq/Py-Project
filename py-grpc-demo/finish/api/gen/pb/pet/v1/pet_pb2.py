@@ -1,4 +1,5 @@
-"""Generated protocol buffer code."""
+
+'Generated protocol buffer code.'
 from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
@@ -45,7 +46,7 @@ _sym_db.RegisterMessage(DeletePetRequest)
 DeletePetResponse = _reflection.GeneratedProtocolMessageType('DeletePetResponse', (_message.Message,), {'DESCRIPTOR': _DELETEPETRESPONSE, '__module__': 'pet.v1.pet_pb2'})
 _sym_db.RegisterMessage(DeletePetResponse)
 _PETSTORESERVICE = DESCRIPTOR.services_by_name['PetStoreService']
-if _descriptor._USE_C_DESCRIPTORS == False:
+if (_descriptor._USE_C_DESCRIPTORS == False):
     DESCRIPTOR._options = None
     DESCRIPTOR._serialized_options = b'Z\x05./gen'
     _PET.fields_by_name['pet_id']._options = None
