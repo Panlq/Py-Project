@@ -2,7 +2,7 @@
 name = "py-grpc-demo"
 version = "0.1.0"
 description = ""
-authors = ["panlq01 <panlq01@mingyuanyun.com>"]
+authors = ["Jon <1191243580@qq.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
