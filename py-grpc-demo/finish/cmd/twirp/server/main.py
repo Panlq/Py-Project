@@ -1,4 +1,5 @@
 
+import uvicorn
 from twirp.asgi import TwirpASGIApp
 from twirp.exceptions import InvalidArgument
 
@@ -27,8 +28,10 @@ class PetStoreService(object):
         pass
 
 
+if __name__ == "__main__":
 
-service = PetStoreServiceServer(service=PetStoreService())
-app = TwirpASGIApp()
-app.add_service(service)
+    service = PetStoreServiceServer(service=PetStoreService())
+    app = TwirpASGIApp()
+    app.add_service(service)
 
+    uvicorn.run(app, host="0.0.0.0", port=3000, log_level="info")
