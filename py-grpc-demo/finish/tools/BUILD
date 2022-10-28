@@ -1,18 +1,17 @@
 package(default_visibility = ["PUBLIC"])
 
-
 sh_cmd(
     # https://github.com/cpcloud/protoletariat
+    # https://github.com/verloopgo/twirpy
     name = "install-deps",
     cmd = [
         "set -eux; rootPath=\\\\$(pwd) && cd tools && pip3 install --upgrade pip && pwd && pip3 install -r requirements.txt",
-        "cd \\\\$rootPath && $(out_exe ///pleasings2//tools/proto:buf) -v generate buf.build/envoyproxy/protoc-gen-validate"
+        "go mod tidy && go generate --tags tools -x -v",
     ],
     deps = [
         "///pleasings2//tools/proto:buf",
     ]
 )
-
 
 sh_cmd(
     name = "proto",
@@ -27,10 +26,22 @@ sh_cmd(
 sh_cmd(
     name = "protol",
     cmd = [
+        "$(out_exe :gen-py-validate)",
         f"$(out_exe :protoletariat) --create-package --in-place --python-out api/gen/pb --exclude-google-imports --exclude-imports-glob 'google/*' buf --buf-path=$(out_exe ///pleasings2//tools/proto:buf)",
     ],
     deps = [
+        ":gen-py-validate",
         ":protoletariat",
+        "///pleasings2//tools/proto:buf"
+    ]
+)
+
+sh_cmd(
+    name = "gen-py-validate",
+    cmd = [
+        "$(out_exe ///pleasings2//tools/proto:buf) -v generate buf.build/envoyproxy/protoc-gen-validate"
+    ],
+    deps = [
         "///pleasings2//tools/proto:buf"
     ]
 )

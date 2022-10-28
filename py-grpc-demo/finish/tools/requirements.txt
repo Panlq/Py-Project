@@ -1,5 +1,7 @@
+twirp
 grpcio==1.47.0
 grpcio-tools==1.47.0
+protobuf==3.20.2
 google==3.0.0
 google-api==0.1.12
 protoc-gen-validate==0.4.2
