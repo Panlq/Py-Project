@@ -2,7 +2,7 @@ package(default_visibility = ["PUBLIC"])
 
 sh_cmd(
     # https://github.com/cpcloud/protoletariat
-    # https://github.com/verloopgo/twirpy
+    # https://github.com/verloop/twirpy
     name = "install-deps",
     cmd = [
         "set -eux; rootPath=\\\\$(pwd) && cd tools && pip3 install --upgrade pip && pwd && pip3 install -r requirements.txt",
