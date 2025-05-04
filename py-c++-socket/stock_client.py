@@ -64,9 +64,10 @@ class StockClient:
                 # 解析消息
                 try:
                     data = json.loads(raw_msg.decode("utf-8"))
-                    if self._handle_data(data):
-                        print("Received end of stream signal")
+                    if data.get("type") == "end_of_stream":
+                        print("End of data stream reached")
                         break
+                    self._handle_data(data)
                 except json.JSONDecodeError:
                     print("Invalid JSON data received")
 
@@ -89,13 +90,8 @@ class StockClient:
         """处理接收到的数据"""
         if data.get("type") == "stock_data":
             print(f"Received stock data: {data}")
-            return False
-        elif data.get("type") == "end_of_stream":
-            print("End of data stream reached")
-            return True
         else:
             print(f"Unknown message type: {data}")
-            return False
 
 
 # 使用示例
